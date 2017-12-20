@@ -1,0 +1,27 @@
+{
+  "name": "react-vip-crypto-ticker",
+  "version": "1.0.0",
+  "description": "A React Based VIP Crypto Market Price Ticker",
+  "main": "index.js",
+  "author": "James Patrick Keegan",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "babel-plugin-syntax-object-rest-spread": "^6.13.0",
+    "babel-polyfill": "^6.26.0",
+    "bulma": "^0.6.1",
+    "numeral": "^2.0.6",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-motion": "^0.5.2"
+  },
+  "devDependencies": {
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "parcel-bundler": "^1.2.1"
+  },
+  "scripts": {
+    "start": "parcel src/index.html -d temp",
+    "build": "parcel build src/index.html"
+  }
+}
