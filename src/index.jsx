@@ -65,7 +65,6 @@ class App extends Component {
             newTicker.id = tickerId;
 
             this.setState((prevState, props) => {
-                // let oldTickers = prevState.tickers.filter(ticker => ticker.id !== tickerId);
                 return { tickers: this.state.tickers.map((ticker) => {
                     if (ticker.id !== tickerId) {
                         return ticker;
