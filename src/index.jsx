@@ -62,15 +62,13 @@ class App extends Component {
             let response = await fetch(tickerUrls[tickerId]);
             
             let {ticker: newTicker} = await response.json();
-            newTicker.id = tickerId;
 
             this.setState((prevState, props) => {
                 return { tickers: this.state.tickers.map((ticker) => {
                     if (ticker.id !== tickerId) {
                         return ticker;
                     }
-
-                    return {ticker, ...newTicker}
+                    return {...newTicker, ...ticker}
                 })};
             });
         }
@@ -81,7 +79,7 @@ class App extends Component {
         return (
             <div className="container">
                 <div className="section">
-                    {this.state.tickers.map(ticker => <TickerCard {...ticker} key={ticker.key}/>)}
+                    {this.state.tickers.map(ticker => <TickerCard {...ticker} key={ticker.id}/>)}
                 </div>
             </div>
         );
