@@ -8,7 +8,10 @@ import TickerCard from './components/TickerCard';
 
 const tickerUrls = {
     btc_idr: 'https://vip.bitcoin.co.id/api/btc_idr/ticker',
-    ltc_idr: 'https://vip.bitcoin.co.id/api/ltc_idr/ticker'
+    ltc_idr: 'https://vip.bitcoin.co.id/api/ltc_idr/ticker',
+    eth_idr: 'https://vip.bitcoin.co.id/api/eth_idr/ticker',
+    etc_idr: 'https://vip.bitcoin.co.id/api/etc_idr/ticker',
+    nxt_idr: 'https://vip.bitcoin.co.id/api/nxt_idr/ticker',
 }
 
 class App extends Component {
@@ -17,12 +20,12 @@ class App extends Component {
 
         let initialTickers = [];
         for (const tickerId in tickerUrls) {
-            initialTickers.push({ id: tickerId });
+            initialTickers.push({ id: tickerId, buy: 0 });
         }
 
         this.state = {
             tickers: initialTickers,
-            refresh: 1000
+            refresh: 2000
         }
 
         this.fetchTickerData = this.fetchTickerData.bind(this);
@@ -39,12 +42,17 @@ class App extends Component {
             
             let {ticker: newTicker} = await response.json();
 
+            /* Convert all values to number */
+            for (const key in newTicker) {
+                newTicker[key] = Number.parseFloat(newTicker[key]);
+            }
+
             this.setState((prevState, props) => {
                 return { tickers: this.state.tickers.map((ticker) => {
                     if (ticker.id !== tickerId) {
                         return ticker;
                     }
-                    return {...newTicker, ...ticker}
+                    return {...ticker, ...newTicker}
                 })};
             });
         }
