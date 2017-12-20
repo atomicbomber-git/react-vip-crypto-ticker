@@ -5,13 +5,15 @@ import "bulma/css/bulma.css";
 
 /* Local Components */
 import TickerCard from './components/TickerCard';
+import tickerProps from './utils/tickerprops';
 
-const tickerUrls = {
-    btc_idr: 'https://vip.bitcoin.co.id/api/btc_idr/ticker',
-    ltc_idr: 'https://vip.bitcoin.co.id/api/ltc_idr/ticker',
-    eth_idr: 'https://vip.bitcoin.co.id/api/eth_idr/ticker',
-    etc_idr: 'https://vip.bitcoin.co.id/api/etc_idr/ticker',
-    nxt_idr: 'https://vip.bitcoin.co.id/api/nxt_idr/ticker',
+const tickers = {
+    btc_idr: { name: 'BTC / IDR', url: 'https://vip.bitcoin.co.id/api/btc_idr/ticker' },
+    ltc_idr: { name: 'LTC / IDR', url: 'https://vip.bitcoin.co.id/api/ltc_idr/ticker' },
+    bch_idr: { name: 'BCH / IDR', url: 'https://vip.bitcoin.co.id/api/bch_idr/ticker' },    
+    eth_idr: { name: 'ETH / IDR', url: 'https://vip.bitcoin.co.id/api/eth_idr/ticker' },
+    etc_idr: { name: 'ETC / IDR', url: 'https://vip.bitcoin.co.id/api/etc_idr/ticker' },
+    nxt_idr: { name: 'NXT / IDR', url: 'https://vip.bitcoin.co.id/api/nxt_idr/ticker' },
 }
 
 class App extends Component {
@@ -19,32 +21,43 @@ class App extends Component {
         super(props);
 
         let initialTickers = [];
-        for (const tickerId in tickerUrls) {
-            initialTickers.push({ id: tickerId, buy: 0 });
+        for (const tickerId in tickers) {
+            let ticker = { id: tickerId, name: tickers[tickerId].name };
+
+            tickerProps.forEach((props) => {
+                ticker[props] = 0;
+            })
+
+            initialTickers.push(ticker);
         }
 
         this.state = {
             tickers: initialTickers,
-            refresh: 2000
         }
 
         this.fetchTickerData = this.fetchTickerData.bind(this);
+        window.setInterval(this.fetchTickerData, 10000);
     }
 
     componentDidMount() {
         this.fetchTickerData();
-        window.setInterval(this.fetchTickerData, this.state.refresh);
     }
 
     async fetchTickerData() {
-        for (const tickerId in tickerUrls) {
-            let response = await fetch(tickerUrls[tickerId]);
-            
-            let {ticker: newTicker} = await response.json();
+        for (const tickerId in tickers) {
+            let response, newTicker;
+            try {
+                response = await fetch(tickers[tickerId].url);
+                newTicker = (await response.json()).ticker; 
+            }
+            catch(e) {
+                console.log("Failed to fetch data.");
+                break;
+            }
 
             /* Convert all values to number */
             for (const key in newTicker) {
-                newTicker[key] = Number.parseFloat(newTicker[key]);
+                newTicker[key] = Number.parseInt(newTicker[key]);
             }
 
             this.setState((prevState, props) => {
@@ -63,7 +76,7 @@ class App extends Component {
         return (
             <div className="container">
                 <div className="section">
-                    {this.state.tickers.map(ticker => <TickerCard {...ticker} key={ticker.id}/>)}
+                    {this.state.tickers.map(ticker => <TickerCard data={ticker} key={ticker.id}/>)}
                 </div>
             </div>
         );
